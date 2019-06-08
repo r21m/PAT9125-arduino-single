@@ -3,10 +3,13 @@
 
 PAT9125 PAT(0x75);
 //
+
+int to_reset = 0;
+
 void setup() {
   Serial.begin(115200);
   PAT.pat9125_init();
-  PAT.pat9125_set_res(240,240);
+  PAT.pat9125_set_res(240,240,true);
 }
 
 void serial_echo(){
@@ -25,9 +28,18 @@ void serial_echo(){
 
 void loop() { 
   PAT.pat9125_update();
-  PAT.pat9125_update_y();
+  PAT.pat9125_update_y2();
+  PAT.pat9125_update_x2();
+
   delay(1);
   
   serial_echo();
-  delay(1000);
+  delay(500);
+  if(to_reset > 20){
+    Serial.println("reset!");
+    PAT.pat9125_reset();
+    to_reset = 0;
+  }
+  
+  to_reset++;
 }

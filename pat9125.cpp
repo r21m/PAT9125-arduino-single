@@ -12,6 +12,20 @@ void PAT9125::pat9125_init() {
   write_reg(PAT9125_CONFIG, 0x97); // reset 
 }
 
+void PAT9125::pat9125_reset() {
+  write_reg(PAT9125_CONFIG, 0x97); // reset
+  //write_reg(PAT9125_CONFIG, 0x98);
+  delay(1);
+  pat9125_set_res(_yres,_xres,_bitres12);
+  delay(1);
+  pat9125_x   = 0;
+  pat9125_y   = 0;
+  pat9125_x2  = 0;
+  pat9125_y2  = 0;
+  pat9125_b   = 0;
+  pat9125_s   = 0;
+}
+
 bool PAT9125::pat9125_read_pid(){
   pat9125_PID1 = read_reg(PAT9125_PID1);//0x31 = 49dec
   pat9125_PID2 = read_reg(PAT9125_PID2);//0x91 = 145dex
@@ -19,10 +33,13 @@ bool PAT9125::pat9125_read_pid(){
   else return false; 
 }
 
-void PAT9125::pat9125_set_res(uint8_t xres, uint8_t yres) {
-  //write_reg(PAT9125_ORIENTATION, 0x04);//12bit resolution
+void PAT9125::pat9125_set_res(uint8_t xres, uint8_t yres, bool bitres12 = false) {
+  if (bitres12) write_reg(PAT9125_ORIENTATION, 0x04);//12bit resolution
   write_reg(PAT9125_RES_X, xres);
   write_reg(PAT9125_RES_Y, yres);
+  _yres = yres;
+  _xres = xres;
+  _bitres12 = _bitres12;
 }
 
 bool PAT9125::pat9125_read_test(){
@@ -59,7 +76,7 @@ void PAT9125::pat9125_update() {
     if (iDY & 0x800) iDY -= 4096;
 
     pat9125_x += iDX;
-    pat9125_y -= iDY;    
+    pat9125_y -= iDY;
   }
 }
 
@@ -81,6 +98,7 @@ void PAT9125::pat9125_update_y2()
   if (ucMotion & 0x80) {
     dy = read_reg(PAT9125_DELTA_YL);
     pat9125_y2 -= dy;
+    
   }
 }
 
@@ -106,7 +124,7 @@ void PAT9125::pat9125_update_x2()
 }
 
 //----PRIVATE----
-void PAT9125::write_reg(uint8_t reg, uint16_t _data) {
+void PAT9125::write_reg(uint8_t reg, uint8_t _data) {
   uint8_t _reg = reg;
   //Wire.begin();
   Wire.beginTransmission(_addr);
@@ -118,10 +136,11 @@ void PAT9125::write_reg(uint8_t reg, uint16_t _data) {
 
 uint16_t PAT9125::read_reg(uint8_t reg) {
   uint8_t _reg = reg;
+  uint8_t val2 = 4;
   Wire.beginTransmission(_addr);
   Wire.write(_reg);
   Wire.endTransmission();
-  Wire.requestFrom(_addr, 4);
+  Wire.requestFrom(_addr, val2);
   uint8_t c = Wire.read();
   Wire.endTransmission();
   delay(1);

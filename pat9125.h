@@ -34,6 +34,7 @@ class PAT9125
     explicit PAT9125(uint8_t addr);
 
     void pat9125_init();
+    void pat9125_reset();
 
     long pat9125_x = 0;
     long pat9125_y = 0;
@@ -41,10 +42,8 @@ class PAT9125
     long pat9125_y2 = 0;
     int8_t pat9125_b = 0;//Brightness
     int8_t pat9125_s = 0;//Shutter
-    
-
-
-    void pat9125_set_res(uint8_t xres, uint8_t yres);
+     
+    void pat9125_set_res(uint8_t xres, uint8_t yres,bool bitres12 = false);
     bool pat9125_read_pid();
     void pat9125_update();
     void pat9125_update_x2();
@@ -72,9 +71,12 @@ class PAT9125
     int8_t dx; 
     int16_t iDX;
     int16_t iDY;
+    
+    //bool _inverse = false;
+    bool _bitres12 = false;
     //
     uint16_t read_reg(uint8_t reg);
-    void write_reg(uint8_t reg, uint16_t _data);
+    void write_reg(uint8_t reg, uint8_t _data);
     uint16_t pat9125_wr_reg_verify(uint8_t reg, uint16_t _data);
 };
 

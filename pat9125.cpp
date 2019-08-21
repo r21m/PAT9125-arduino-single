@@ -42,6 +42,16 @@ void PAT9125::pat9125_set_res(uint8_t xres, uint8_t yres, bool bitres12 = false)
   _bitres12 = _bitres12;
 }
 
+void PAT9125::pat9125_set_res_x(uint8_t xres) {
+  write_reg(PAT9125_RES_X, xres);
+  _xres = xres;
+}
+
+void PAT9125::pat9125_set_res_y(uint8_t yres) {
+  write_reg(PAT9125_RES_Y, yres);
+  _yres = yres;
+}
+
 bool PAT9125::pat9125_read_test(){
   
   pat9125_b = read_reg(PAT9125_FRAME);

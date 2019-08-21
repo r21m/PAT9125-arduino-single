@@ -44,6 +44,8 @@ class PAT9125
     int8_t pat9125_s = 0;//Shutter
      
     void pat9125_set_res(uint8_t xres, uint8_t yres,bool bitres12 = false);
+    void pat9125_set_res_x(uint8_t xres);
+    void pat9125_set_res_y(uint8_t yres);
     bool pat9125_read_pid();
     void pat9125_update();
     void pat9125_update_x2();
